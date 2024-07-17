@@ -1,16 +1,45 @@
-# loginflutter
+# Login y ubicación en Flutter
 
-A new Flutter project.
+## Herramientas
 
-## Getting Started
+- Visual Studio Code
+- Flutter
+- Android Studio
+- Node
+- Firebase
 
-This project is a starting point for a Flutter application.
+## Descargar paquetes flutter
 
-A few resources to get you started if this is your first Flutter project:
+Ejecutar el siguiente comando para poder descargar todo lo necesario del proyecto
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+flutter pub get  
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Variables
+
+Ejecutar el siguiente comando para poder generar sus variables de Firebase
+
+```bash
+flutter pub global activate flutterfire_cli
+flutterfire configure    
+```
+
+Para firebase hosting ejecutar
+
+```bash
+npm install -g firebase-tools
+npx firebase login
+npx firebase hosting init
+```
+
+Agregar sus variables web para iniciar sesion en web y agregarlas en index.html
+
+```bash
+flutter deploy web
+
+npx firebase deploy
+```
+
+
+
