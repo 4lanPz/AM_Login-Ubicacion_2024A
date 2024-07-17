@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'registerpage.dart';
@@ -50,8 +51,7 @@ class _LoginState extends State<LoginPage> {
             widthFactor: 0.6,
             child: ElevatedButton(
               onPressed: () async {
-                await signInWithGoogle(
-                    context); // Llama a signInWithGoogle directamente
+                await signInWithGoogle(context);
               },
               child: const Text("Iniciar sesión con Google"),
             ),
@@ -156,28 +156,43 @@ class _LoginState extends State<LoginPage> {
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
-      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-      if (googleUser != null) {
-        GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-        AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
+      if (kIsWeb) {
+        // Para la web
+        GoogleAuthProvider authProvider = GoogleAuthProvider();
         UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithCredential(credential);
+            await FirebaseAuth.instance.signInWithPopup(authProvider);
+        if (userCredential.user != null) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const Ubicacion(title: 'Ubicación')),
+            (Route<dynamic> route) => false,
+          );
+        }
+      } else {
+        // Para Android
+        GoogleSignIn googleSignIn = GoogleSignIn();
+        await googleSignIn.signOut(); // Cierra la sesión actual
 
-        print(userCredential.user?.displayName);
-
-        // Navega a la pantalla de Ubicación si el inicio de sesión es exitoso
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const Ubicacion(title: 'Ubicación')),
-          (Route<dynamic> route) => false,
-        );
+        GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+        if (googleUser != null) {
+          GoogleSignInAuthentication googleAuth =
+              await googleUser.authentication;
+          AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+          UserCredential userCredential =
+              await FirebaseAuth.instance.signInWithCredential(credential);
+          if (userCredential.user != null) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const Ubicacion(title: 'Ubicación')),
+              (Route<dynamic> route) => false,
+            );
+          }
+        }
       }
     } catch (e) {
       print('Error al iniciar sesión con Google: $e');
