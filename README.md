@@ -41,5 +41,11 @@ flutter deploy web
 npx firebase deploy
 ```
 
+## Generar APK
+Ejecutar el siguiente comando y buscar la APK generada en build/app/flutter-apk/
+```bash
+flutter build apk --split-per-abi
+```
+
 
 
